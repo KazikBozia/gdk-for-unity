@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Improbable.Worker.CInterop;
 using Unity.Entities;
 
@@ -9,6 +11,8 @@ namespace Improbable.Gdk.Core
     public class ComponentUpdateSystem : ComponentSystem
     {
         private WorkerSystem worker;
+
+        public readonly Dictionary<Type, ulong> ComponentSendCount = new Dictionary<Type, ulong>();
 
         public void SendUpdate<T>(in T update, EntityId entityId) where T : struct, ISpatialComponentUpdate
         {
@@ -103,6 +107,18 @@ namespace Improbable.Gdk.Core
 
         protected override void OnUpdate()
         {
+        }
+
+        [Conditional("UNITY_EDITOR")]
+        public void IncreaseSendMetric<T>() where T : struct, ISpatialComponentData
+        {
+            var componentType = typeof(T);
+            if (!ComponentSendCount.ContainsKey(componentType))
+            {
+                ComponentSendCount.Add(componentType, 0);
+            }
+
+            ComponentSendCount[componentType]++;
         }
     }
 }

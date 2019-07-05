@@ -78,6 +78,7 @@ var fieldDetails = fieldDetailsList[i]; #>
                             }
 <# } #>
 
+                            componentUpdateSystem.IncreaseSendMetric<<#= componentNamespace #>.Component>();
                             componentUpdateSystem.SendUpdate(in update, entityIdArray[i].EntityId);
                             data.MarkDataClean();
                             componentArray[i] = data;
